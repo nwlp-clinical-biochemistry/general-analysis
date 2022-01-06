@@ -28,15 +28,18 @@ df_all <- lapply(files, function(x) {
       )
       ,Date = parse_date_time(ResultDT, c("dmy HMS"))
       ,Month = month(Date)
+      ,Month_floor = floor_date(Date, "month")
+      ,Week = week(Date)
+      ,Week_floor = floor_date(Date, "week")
     ) %>%
     filter(`Test Code` %in% analytes)
   return(df)
 }) %>% bind_rows()
 
-## plot of data by month ----
-ggplot(df_all, aes(x = as.factor(Month), y = Result_new))+
-  geom_jitter(alpha = 0.1, width = 0.2, aes(text = paste0("Month: ", Month, "\n", "Result: ", Result_new, "\nSample: ", `Container ID`)))+
-  geom_violin(draw_quantiles = c(0.055, 0.5, 0.945), fill = NA, adjust = 2)+
+## plot of data by week ----
+ggplot(df_all, aes(x = Week_floor, y = Result_new, group = Week_floor))+
+  # geom_jitter(alpha = 0.1, width = 0.2)+
+  geom_violin(draw_quantiles = c(0.055, 0.5, 0.945), fill = NA, adjust = 2)+ # 89% interval
   stat_summary(fun = "median", geom = "line", colour = "red2", aes(group = 1), size = 1, alpha = 0.5)+
   stat_summary(fun = "quantile", geom = "line", colour = "mediumorchid", aes(group = 1), size = 1, alpha = 0.5, fun.args = list(probs = 0.055))+
   stat_summary(fun = "quantile", geom = "line", colour = "mediumorchid", aes(group = 1), size = 1, alpha = 0.5, fun.args = list(probs = 0.945))+
