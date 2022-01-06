@@ -23,7 +23,7 @@ df_all <- lapply(files, function(x) {
     df <- read_excel(paste0(path, x), sheet = "XAC") %>%
       filter(`Test Code` == "K") %>%
       filter(!grepl("[:lower:]", `Location Code`)) %>% # filter for GP locations
-      filter(!grepl("CXH|CX|SM|HH", `Location Code`)) %>%
+      filter(!grepl("CXH|CX|SM|HH|WM", `Location Code`)) %>%
       mutate(
         Result_new = case_when(
           grepl("<", Result) ~ NA_real_
